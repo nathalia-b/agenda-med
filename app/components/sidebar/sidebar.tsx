@@ -1,6 +1,7 @@
-// components/Sidebar.tsx
-
 "use client";
+import Image from "next/image";
+import Logo from "@/app/logo.png";
+import { Flex } from "@radix-ui/themes";
 import { SidebarLink } from "./sidebarLink";
 import React from "react";
 import {
@@ -30,12 +31,12 @@ export default function Sidebar() {
   return (
     <div style={sidebarStyle} id="sidebar">
       <nav>
+        <Flex justify={"center"} className="mt-5 mb-[50px]">
+          <Image width="250" height="100" src={Logo} alt="bla"></Image>
+        </Flex>
         <ul>
           <SidebarLink href="/">
-            <HomeIcon
-              strokeWidth="41"
-              style={{ width: "17px", height: "17px" }}
-            />
+            <HomeIcon style={{ width: "17px", height: "17px" }} />
             <span className="ml-5">Início</span>
           </SidebarLink>
 
