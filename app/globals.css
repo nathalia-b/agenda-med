@@ -1,9 +1,15 @@
-@import "tailwindcss";
 @import "@radix-ui/themes/styles.css";
+@import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: #4e6dce;
+  --primary-light: #ebeffa;
+  --secondary: #b8ddff;
+  --secondary-lighter: #dcf8ff;
+
+  --text-dark: #343434;
+  --text-medium: #646464;
+  --text-light: #969696;
 }
 
 @theme inline {
@@ -13,15 +19,29 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-dark);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--text-medium);
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+h2 {
+  font-size: 1.5em;
+  margin: 0.75em 0;
+}
+
+#sidebar a.inactive:hover {
+  background-color: #ebeffa !important;
 }
