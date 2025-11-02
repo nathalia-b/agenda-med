@@ -20,6 +20,7 @@ export async function POST(request: Request) {
       crm: string;
       especialidadeId: number;
       imageUrl: string;
+      sexo: string;
     } = await request.json();
 
     if (!body.nome || !body.crm || !body.especialidadeId) {
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
       crm: body.crm,
       especialidadeId: body.especialidadeId,
       imageUrl: body.imageUrl || "null",
+      sexo: body.sexo || "null",
     };
 
     mockMedicos.push(novoMedico);

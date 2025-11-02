@@ -39,11 +39,13 @@ h3 {
 h1 {
   font-size: 2em;
   margin: 0.67em 0;
+  font-weight: 900;
 }
 
 h2 {
   font-size: 1.5em;
   margin: 0.75em 0;
+  font-weight: 500;
 }
 
 #sidebar a.inactive:hover {
@@ -87,4 +89,13 @@ select:disabled {
   border-color: var(--bluishGray);
   color: var(--text-lighter);
   cursor: not-allowed;
+}
+
+.rt-AvatarImage {
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+.rt-AvatarImage:hover {
+  opacity: 100;
+  cursor: pointer;
 }

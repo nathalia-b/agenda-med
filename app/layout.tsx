@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Theme grayColor="slate">
+        <Theme grayColor="slate" radius="medium">
           <Flex className="flex min-h-screen w-full bg-[#f4f5f9]">
             <Sidebar></Sidebar>
             <div className="ml-[250px] px-[45px] pt-[50px] w-full">

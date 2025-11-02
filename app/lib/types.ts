@@ -14,6 +14,7 @@ export interface Medico {
   nome: string;
   crm: string;
   especialidadeId: number;
+  sexo: string;
 }
 
 export interface Disponibilidade {
