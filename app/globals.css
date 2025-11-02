@@ -68,3 +68,23 @@ button:hover {
   opacity: 1;
   color: white;
 }
+
+select,
+input {
+  width: 100%;
+  padding: 3px;
+  border-radius: 4px;
+  background-color: white;
+  border: 1px solid var(--lightGray);
+}
+
+select {
+  cursor: pointer;
+}
+
+select:disabled {
+  background-color: var(--bluishGray);
+  border-color: var(--bluishGray);
+  color: var(--text-lighter);
+  cursor: not-allowed;
+}
