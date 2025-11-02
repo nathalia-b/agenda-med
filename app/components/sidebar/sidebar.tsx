@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Logo from "@/app/logo.png";
+import logo from "@/app/logo.png";
 import { Flex } from "@radix-ui/themes";
 import { SidebarLink } from "./sidebarLink";
 import React from "react";
@@ -14,7 +14,7 @@ import {
 
 const sidebarStyle: React.CSSProperties = {
   width: "250px",
-  height: "100vh",
+  height: "100%",
   position: "fixed",
   color: "white",
   paddingTop: "25px",
@@ -31,8 +31,8 @@ export default function Sidebar() {
   return (
     <div style={sidebarStyle} id="sidebar">
       <nav>
-        <Flex justify={"center"} className="mt-5 mb-[50px]">
-          <Image width="250" height="100" src={Logo} alt="bla"></Image>
+        <Flex justify={"center"} className="mt-5 mb-[50px] p-2">
+          <Image src={logo} alt="Logo do sistema" loading="eager" />
         </Flex>
         <ul>
           <SidebarLink href="/">
@@ -41,22 +41,22 @@ export default function Sidebar() {
           </SidebarLink>
 
           <SidebarLink href="/novo-agendamento">
-            <FilePlusIcon />
+            <FilePlusIcon style={{ width: "17px", height: "17px" }} />
             <span className="ml-5">Novo agendamento</span>
           </SidebarLink>
 
           <SidebarLink href="/horarios">
-            <ClockIcon />
+            <ClockIcon style={{ width: "17px", height: "17px" }} />
             <span className="ml-5">Horários</span>
           </SidebarLink>
 
           <SidebarLink href="/agendamentos">
-            <ListBulletIcon />
+            <ListBulletIcon style={{ width: "17px", height: "17px" }} />
             <span className="ml-5">Agendamentos</span>
           </SidebarLink>
 
           <SidebarLink href="/especialidades">
-            <PersonIcon />
+            <PersonIcon style={{ width: "17px", height: "17px" }} />
             <span className="ml-5">Especialidades</span>
           </SidebarLink>
         </ul>
