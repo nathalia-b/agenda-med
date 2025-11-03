@@ -1,7 +1,12 @@
+"use client";
+
+import ProximasConsultas from "@/app/components/tableAgendamentos";
+
 export default function Agendamentos() {
   return (
-    <div>
-      <h2>Agendamentos</h2>
+    <div className="h-50">
+      <h2> Agendamentos </h2>
+      <ProximasConsultas></ProximasConsultas>
     </div>
   );
 }
