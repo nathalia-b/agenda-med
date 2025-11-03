@@ -178,7 +178,7 @@ export default function NovoAtendimentoForm() {
 
           <Flex justify={"end"}>
             <button type="submit" disabled={loading}>
-              {loading ? "Cadastrando..." : "Cadastrar Agendamento"}
+              {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
           </Flex>
         </form>
