@@ -30,7 +30,7 @@ export interface Agendamento {
   pacienteNome: string;
   dataHora: string;
   especialidadeId: number;
-  convenioId: number;
+  convenioId: number | string;
   medicoId: number;
   status: string;
 }

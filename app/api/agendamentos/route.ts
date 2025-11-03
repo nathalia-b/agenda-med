@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       pacienteNome: string;
       dataHora: string;
       especialidadeId: number;
-      convenioId: number;
+      convenioId: number | string;
       medicoId: number;
       status: string;
     } = await request.json();
@@ -28,7 +28,6 @@ export async function POST(request: Request) {
       !body.pacienteNome ||
       !body.dataHora ||
       !body.especialidadeId ||
-      !body.convenioId ||
       !body.medicoId
     ) {
       return NextResponse.json(
@@ -42,7 +41,7 @@ export async function POST(request: Request) {
       pacienteNome: body.pacienteNome,
       dataHora: body.dataHora,
       especialidadeId: body.especialidadeId,
-      convenioId: body.convenioId,
+      convenioId: body.convenioId || "particular",
       medicoId: body.medicoId,
       status: body.status || "agendado",
     };

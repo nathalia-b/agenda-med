@@ -1,17 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
+import { CheckIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import { Badge, Flex, IconButton, Spinner, Table } from "@radix-ui/themes";
 import { Agendamento, Medico } from "../lib/types";
-import { CheckIcon, Pencil1Icon } from "@radix-ui/react-icons";
+import { mockConvenios } from "../lib/mockData";
 
 interface TableAgendamentosProps {
   limit?: number;
+  agendamentos?: Agendamento[];
+  setAgendamentos?: React.Dispatch<React.SetStateAction<Agendamento[]>>;
 }
 
-export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
-  const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+export default function TableAgendamentos({
+  limit,
+  agendamentos: agendamentosProp,
+  setAgendamentos: setAgendamentosProp,
+}: TableAgendamentosProps) {
+  // Estado interno para armazenar agendamentos caso não venham via props
+  const [agendamentosInterno, setAgendamentosInterno] = useState<Agendamento[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
   const [medicos, setMedicos] = useState<Medico[]>([]);
+
+  const agendamentos = agendamentosProp ?? agendamentosInterno;
+  const setAgendamentos = setAgendamentosProp ?? setAgendamentosInterno;
 
   useEffect(() => {
     async function fetchData() {
@@ -24,7 +37,7 @@ export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
         const agData: Agendamento[] = await agRes.json();
         const medData: Medico[] = await medRes.json();
 
-        setAgendamentos(agData);
+        if (!agendamentosProp) setAgendamentosInterno(agData);
         setMedicos(medData);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -34,7 +47,7 @@ export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
     }
 
     fetchData();
-  }, []);
+  }, [agendamentosProp]);
 
   if (loading) {
     return (
@@ -53,6 +66,11 @@ export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
     return medico ? medico.nome : "—";
   };
 
+  const getConvenioNome = (id: number | string) => {
+    const convenio = mockConvenios.find((m) => m.id === id);
+    return convenio ? convenio.nome : null;
+  };
+  
   const handleMarcarAtendido = async (agendamento: Agendamento) => {
     try {
       const res = await fetch("/api/agendamentos", {
@@ -98,6 +116,9 @@ export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
               Médico
             </Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell justify={"center"}>
+              Convênio
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell justify={"center"}>
               Status
             </Table.ColumnHeaderCell>
             <Table.ColumnHeaderCell justify={"center"}>
@@ -126,8 +147,19 @@ export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
                 <Table.Cell align={"center"}>
                   {agendamento.pacienteNome}
                 </Table.Cell>
+
                 <Table.Cell align={"center"}>
                   {getMedicoNome(agendamento.medicoId)}
+                </Table.Cell>
+
+                <Table.Cell align={"center"}>
+                  <Badge
+                    color={
+                      getConvenioNome(agendamento.convenioId) ? "plum" : "gray"
+                    }
+                  >
+                    {getConvenioNome(agendamento.convenioId) || "Particular"}
+                  </Badge>
                 </Table.Cell>
                 <Table.Cell align={"center"}>
                   {agendamento.status === "agendado" ? (
@@ -136,16 +168,17 @@ export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
                     <Badge color="green">Atendido</Badge>
                   )}
                 </Table.Cell>
+
                 <Table.Cell align="center">
                   <IconButton
-                    variant="soft"
-                    color="blue"
+                    variant="outline"
+                    color="iris"
                     title={
                       agendamento.status === "agendado"
                         ? "Marcar como atendido"
                         : ""
                     }
-                    disabled={agendamento.status === "agendado" ? false : true}
+                    disabled={agendamento.status !== "agendado"}
                     onClick={() => handleMarcarAtendido(agendamento)}
                   >
                     {agendamento.status === "agendado" ? (

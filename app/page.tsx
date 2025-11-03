@@ -1,100 +1,132 @@
+"use client";
+import TableAgendamentos from "./components/tableAgendamentos";
+import { Box, Button, Card, Flex, Text } from "@radix-ui/themes";
+import { useState, useEffect } from "react";
+import { Agendamento } from "./lib/types";
 import {
-  Box,
-  Card,
-  Flex,
-  Avatar,
-  Text,
-  Table,
-  Link,
-  Select,
-} from "@radix-ui/themes";
-import Image from "next/image";
+  CalendarIcon,
+  CheckCircledIcon,
+  ClockIcon,
+} from "@radix-ui/react-icons";
 
-export default function Home() {
+const Home = () => {
+  const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+
+  useEffect(() => {
+    const fetchAgendamentos = async () => {
+      try {
+        const response = await fetch("/api/agendamentos");
+        const data: Agendamento[] = await response.json();
+        setAgendamentos(data);
+      } catch (error) {
+        console.error("Erro ao buscar agendamentos:", error);
+      }
+    };
+
+    fetchAgendamentos();
+  }, []);
+
+  const atendidos = agendamentos.filter(
+    (agendamento) => agendamento.status === "atendido"
+  ).length;
+
+  const pendentes = agendamentos.filter(
+    (agendamento) => agendamento.status === "agendado"
+  ).length;
+
   return (
     <Flex wrap={"wrap"} direction={"column"} gap={"9"}>
-      <Flex justify={"between"} wrap={"wrap"}>
-        <Box width="300px" className="mt-5">
-          <Card size="3">
-            <Flex gap="4" align="center">
-              <Box>
-                <Text as="div" size="4" color="gray">
-                  Agendamentos atendidos
-                </Text>
-                <Text as="div" size="5" weight="bold">
-                  10
-                </Text>
-              </Box>
-            </Flex>
-          </Card>
-        </Box>
-        <Box width="300px" className="mt-5">
-          <Card size="3">
-            <Flex gap="4" align="center">
-              <Box>
-                <Text as="div" size="4" color="gray">
-                  Agendamentos pendentes
-                </Text>
-                <Text as="div" size="5" weight="bold">
-                  1
-                </Text>
-              </Box>
-            </Flex>
-          </Card>
-        </Box>
-        <Box width="300px" className="mt-5">
-          <Card size="3">
-            <Flex gap="4" align="center">
-              <Box>
-                <Text as="div" size="4" color="gray">
-                  Médicos disponíveis
-                </Text>
-                <Text as="div" size="5" weight="bold">
-                  3
-                </Text>
-              </Box>
-            </Flex>
-          </Card>
-        </Box>
-      </Flex>
+      <Flex direction="column" gap="9">
+        <Flex
+          justify="center"
+          align="center"
+          gap="5"
+          wrap="wrap"
+          className="mt-2 mb-2"
+        >
+          <Box width="260px">
+            <Card
+              size="3"
+              className="bg-white hover:shadow-md transition-all rounded-2xl border border-gray-200"
+            >
+              <Flex align="center" justify="center" gap="4" p="4">
+                <div className="p-3 rounded-full bg-blue-100 flex items-center justify-center">
+                  <ClockIcon width={32} height={32} color="#3B82F6" />
+                </div>
+                <Box>
+                  <Text as="div" size="8" weight="bold" className="text-center">
+                    {pendentes}
+                  </Text>
+                  <Text as="div" size="3" color="gray">
+                    Pendentes
+                  </Text>
+                </Box>
+              </Flex>
+            </Card>
+          </Box>
 
-      <Flex direction={"column"}>
-        <h2>Próximas consultas</h2>
-        <Table.Root>
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell>Hora</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Paciente</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Médico</Table.ColumnHeaderCell>
-            </Table.Row>
-          </Table.Header>
+          <Box width="260px">
+            <Card
+              size="3"
+              className="bg-white hover:shadow-md transition-all rounded-2xl border border-gray-200"
+            >
+              <Flex align="center" justify="center" gap="4" p="4">
+                <div className="p-3 rounded-full bg-green-100 flex items-center justify-center">
+                  <CheckCircledIcon width={32} height={32} color="#15803D" />
+                </div>
+                <Box>
+                  <Text as="div" size="8" weight="bold" className="text-center">
+                    {atendidos}
+                  </Text>
+                  <Text as="div" size="3" color="gray">
+                    Atendidos
+                  </Text>
+                </Box>
+              </Flex>
+            </Card>
+          </Box>
 
-          <Table.Body>
-            <Table.Row>
-              <Table.RowHeaderCell>09:00</Table.RowHeaderCell>
-              <Table.Cell>Zahra Ambessa</Table.Cell>
-              <Table.Cell>Jasper Eriksson</Table.Cell>
-            </Table.Row>
+          <Box width="260px">
+            <Card
+              size="3"
+              className="bg-white hover:shadow-md transition-all rounded-2xl border border-gray-200"
+            >
+              <Flex align="center" justify="center" gap="4" p="4">
+                <div className="p-3 rounded-full bg-orange-100 flex items-center justify-center">
+                  <CalendarIcon width={32} height={32} color="#F97316" />
+                </div>
+                <Box>
+                  <Text as="div" size="8" weight="bold" className="text-center">
+                    {agendamentos.length}
+                  </Text>
+                  <Text as="div" size="3" color="gray">
+                    Total
+                  </Text>
+                </Box>
+              </Flex>
+            </Card>
+          </Box>
+        </Flex>
 
-            <Table.Row>
-              <Table.RowHeaderCell>11:00</Table.RowHeaderCell>
-              <Table.Cell>Za Amsa</Table.Cell>
-              <Table.Cell>Jar Eron</Table.Cell>
-            </Table.Row>
+        <Flex id="listaAgendamentos" direction="column" className="mt-4">
+          <h2>Últimos agendamentos</h2>
+          <TableAgendamentos
+            limit={7}
+            agendamentos={agendamentos}
+            setAgendamentos={setAgendamentos}
+          />
 
-            <Table.Row>
-              <Table.RowHeaderCell>10:00</Table.RowHeaderCell>
-              <Table.Cell>Ambessa</Table.Cell>
-              <Table.Cell>Eriksson</Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table.Root>
-        <span className="flex justify-end w-full">
-          <Link href="/agendamentos" title="Ir para a página de agendamentos">
-            Ver mais
-          </Link>
-        </span>
+          <span className="flex justify-end w-full mt-4">
+            <Button variant="surface">
+              <a href="/agendamentos" title="Ir para listagem de agendamentos">
+                Ver mais
+              </a>
+            </Button>
+          </span>
+        </Flex>
       </Flex>
     </Flex>
   );
-}
+};
+
+export default Home;
