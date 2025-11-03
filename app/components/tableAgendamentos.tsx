@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Badge, IconButton, Table } from "@radix-ui/themes";
+import { Badge, Flex, IconButton, Spinner, Table } from "@radix-ui/themes";
 import { Agendamento, Medico } from "../lib/types";
-import { CheckCircledIcon } from "@radix-ui/react-icons";
+import { CheckIcon, Pencil1Icon } from "@radix-ui/react-icons";
 
-interface ProximasConsultasProps {
+interface TableAgendamentosProps {
   limit?: number;
 }
 
-export default function ProximasConsultas({ limit }: ProximasConsultasProps) {
+export default function TableAgendamentos({ limit }: TableAgendamentosProps) {
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
   const [loading, setLoading] = useState(true);
   const [medicos, setMedicos] = useState<Medico[]>([]);
@@ -36,19 +36,52 @@ export default function ProximasConsultas({ limit }: ProximasConsultasProps) {
     fetchData();
   }, []);
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) {
+    return (
+      <Flex align="center" gap="4">
+        <Spinner size="3" />
+      </Flex>
+    );
+  }
 
-  const agendamentosExibir = limit
-    ? agendamentos.slice(0, limit)
-    : agendamentos;
+  const agendamentosExibir = [...agendamentos]
+    .reverse()
+    .slice(0, limit ?? agendamentos.length);
 
   const getMedicoNome = (id: number) => {
     const medico = medicos.find((m) => m.id === id);
     return medico ? medico.nome : "—";
   };
 
+  const handleMarcarAtendido = async (agendamento: Agendamento) => {
+    try {
+      const res = await fetch("/api/agendamentos", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: agendamento.id,
+          status: "atendido",
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData?.message || "Erro desconhecido");
+      }
+
+      const atualizado: Agendamento = await res.json();
+      setAgendamentos((prev) =>
+        prev.map((a) => (a.id === atualizado.id ? atualizado : a))
+      );
+    } catch {
+      console.error("Não foi possível atualizar o status do agendamento");
+    }
+  };
+
   return (
-    <div className="w-full max-h-[85vh] rounded flex flex-col overflow-auto px-10 mr-5">
+    <div className="w-full max-h-[85vh] rounded flex flex-col overflow-auto mr-5">
       <Table.Root>
         <Table.Header>
           <Table.Row align={"center"}>
@@ -103,9 +136,23 @@ export default function ProximasConsultas({ limit }: ProximasConsultasProps) {
                     <Badge color="green">Atendido</Badge>
                   )}
                 </Table.Cell>
-                <Table.Cell align={"center"}>
-                  <IconButton color="crimson" variant="soft">
-                    <CheckCircledIcon width="18" height="18" />
+                <Table.Cell align="center">
+                  <IconButton
+                    variant="soft"
+                    color="blue"
+                    title={
+                      agendamento.status === "agendado"
+                        ? "Marcar como atendido"
+                        : ""
+                    }
+                    disabled={agendamento.status === "agendado" ? false : true}
+                    onClick={() => handleMarcarAtendido(agendamento)}
+                  >
+                    {agendamento.status === "agendado" ? (
+                      <Pencil1Icon width={148} height={18} />
+                    ) : (
+                      <CheckIcon width={148} height={18} />
+                    )}
                   </IconButton>
                 </Table.Cell>
               </Table.Row>

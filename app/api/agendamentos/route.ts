@@ -19,8 +19,8 @@ export async function POST(request: Request) {
       pacienteNome: string;
       dataHora: string;
       especialidadeId: number;
-      convenioID: number;
-      medicoID: number;
+      convenioId: number;
+      medicoId: number;
       status: string;
     } = await request.json();
 
@@ -28,13 +28,12 @@ export async function POST(request: Request) {
       !body.pacienteNome ||
       !body.dataHora ||
       !body.especialidadeId ||
-      !body.convenioID ||
-      !body.medicoID ||
-      !body.status
+      !body.convenioId ||
+      !body.medicoId
     ) {
       return NextResponse.json(
-        { message: "Todos os campos são obrigatórios" },
-        { status: 400 } // 400 Bad Request
+        { message: "Preencha todos os campos" },
+        { status: 400 }
       );
     }
 
@@ -43,8 +42,8 @@ export async function POST(request: Request) {
       pacienteNome: body.pacienteNome,
       dataHora: body.dataHora,
       especialidadeId: body.especialidadeId,
-      convenioId: body.convenioID,
-      medicoId: body.medicoID,
+      convenioId: body.convenioId,
+      medicoId: body.medicoId,
       status: body.status || "agendado",
     };
 
@@ -53,6 +52,35 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json(
       { message: "Erro ao realizar agendamento", error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const body: { id: number; status: string } = await request.json();
+
+    if (body.id === undefined || body.id === null || !body.status) {
+      return NextResponse.json(
+        { message: "ID e status são obrigatórios" },
+        { status: 400 }
+      );
+    }
+
+    const agendamentoIndex = mockAgendamentos.findIndex(
+      (a) => a.id === body.id
+    );
+
+    // Atualiza o status
+    mockAgendamentos[agendamentoIndex].status = body.status;
+
+    return NextResponse.json(mockAgendamentos[agendamentoIndex], {
+      status: 200,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Erro ao atualizar status", error },
       { status: 500 }
     );
   }
