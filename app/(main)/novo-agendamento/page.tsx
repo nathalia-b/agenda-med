@@ -15,6 +15,7 @@ export default function NovoAtendimentoForm() {
   const [medicoId, setMedicoId] = useState<number | "">("");
   const [especialidadeId, setEspecialidadeId] = useState<number | "">("");
   const [medicosDisponiveis, setMedicosDisponiveis] = useState(mockMedicos);
+  const [possuiConvenio, setPossuiConvenio] = useState<"sim" | "nao" | "">("");
   const [convenioId, setConvenioId] = useState<number | "">("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,7 @@ export default function NovoAtendimentoForm() {
     setMedicoId("");
     setConvenioId("");
     setEspecialidadeId("");
+    setPossuiConvenio("");
   };
 
   useEffect(() => {
@@ -36,8 +38,18 @@ export default function NovoAtendimentoForm() {
       );
       setMedicosDisponiveis(medicosFiltrados);
       setMedicoId("");
+    } else {
+      setMedicosDisponiveis(mockMedicos);
+      setMedicoId("");
     }
   }, [especialidadeId]);
+
+  // Limpa convênio se o usuário escolher "Não"
+  useEffect(() => {
+    if (possuiConvenio === "nao") {
+      setConvenioId("");
+    }
+  }, [possuiConvenio]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -49,21 +61,34 @@ export default function NovoAtendimentoForm() {
       setLoading(false);
       return;
     }
+    if (!especialidadeId) {
+      setMessage("Por favor, selecione uma especialidade.");
+      setLoading(false);
+      return;
+    }
+    if (!medicoId) {
+      setMessage("Por favor, selecione um médico.");
+      setLoading(false);
+      return;
+    }
+    if (possuiConvenio === "sim" && !convenioId) {
+      setMessage("Por favor, selecione um convênio.");
+      setLoading(false);
+      return;
+    }
 
     const dataHora = `${data}T${hora}`;
 
     try {
       const response = await fetch("/api/agendamentos", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           pacienteNome,
           dataHora,
           especialidadeId,
           medicoId,
-          convenioId,
+          convenioId: possuiConvenio === "sim" ? convenioId : null,
         }),
       });
 
@@ -72,9 +97,7 @@ export default function NovoAtendimentoForm() {
       if (response.ok) {
         setOpenDialog(true);
         limpaCampos();
-        setTimeout(() => {
-          setOpenDialog(false);
-        }, 800);
+        setTimeout(() => setOpenDialog(false), 800);
       } else {
         setMessage(
           `Erro: ${
@@ -98,7 +121,9 @@ export default function NovoAtendimentoForm() {
         <h2>Novo agendamento</h2>
         <form onSubmit={handleSubmit}>
           <div className="my-5 mt-10">
-            <label htmlFor="nomePaciente">Nome do Paciente</label>
+            <label htmlFor="nomePaciente">
+              Nome do Paciente<span className="text-purple-500">*</span>
+            </label>
             <input
               type="text"
               name="nomePaciente"
@@ -108,9 +133,12 @@ export default function NovoAtendimentoForm() {
               required
             />
           </div>
+
           <Flex justify={"between"} className="my-5">
             <div className="w-full">
-              <label htmlFor="data">Data</label>
+              <label htmlFor="data">
+                Data<span className="text-purple-500">*</span>
+              </label>
               <input
                 type="date"
                 name="data"
@@ -122,7 +150,9 @@ export default function NovoAtendimentoForm() {
             </div>
 
             <div className="ml-5 w-100">
-              <label htmlFor="hora">Hora</label>
+              <label htmlFor="hora">
+                Hora<span className="text-purple-500">*</span>
+              </label>
               <input
                 type="time"
                 name="hora"
@@ -134,19 +164,46 @@ export default function NovoAtendimentoForm() {
             </div>
           </Flex>
 
+          {/* NOVO: Possui convênio */}
           <div className="my-5">
-            <label htmlFor="convenio">Convênio</label>
-            <SelectComponent
-              id="convenio"
-              value={convenioId}
-              onChange={(value) => setConvenioId(value)}
-              options={mockConvenios}
-              placeholder="Selecione um convênio"
-            />
+            <label htmlFor="possuiConvenio">Possui convênio?</label>
+            <select
+              id="possuiConvenio"
+              value={possuiConvenio}
+              onChange={(e) =>
+                setPossuiConvenio(e.target.value === "sim" ? "sim" : "nao")
+              }
+            >
+              <option value="">Selecione</option>
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+            </select>
           </div>
 
+          {/* NOVO: Select de convênio só se "Sim" */}
+          {possuiConvenio === "sim" && (
+            <div className="my-5">
+              <label htmlFor="convenio">Convênio</label>
+              <select
+                id="convenio"
+                value={convenioId}
+                onChange={(e) => setConvenioId(Number(e.target.value))}
+              >
+                <option value="">Selecione um convênio</option>
+                {mockConvenios.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="my-5">
-            <label htmlFor="especialidade">Escolha uma especialidade</label>
+            <label htmlFor="especialidade">
+              Escolha uma especialidade
+              <span className="text-purple-500">*</span>
+            </label>
             <SelectComponent
               id="especialidade"
               value={especialidadeId}
@@ -157,7 +214,9 @@ export default function NovoAtendimentoForm() {
           </div>
 
           <div className="my-5">
-            <label htmlFor="medico">Médico (CRM)</label>
+            <label htmlFor="medico">
+              Médico<span className="text-purple-500">*</span>
+            </label>
             <SelectComponent
               id="medico"
               value={medicoId}
@@ -177,7 +236,7 @@ export default function NovoAtendimentoForm() {
           {message && <p className="message">{message}</p>}
 
           <Flex justify={"end"}>
-            <button type="submit" disabled={loading}>
+            <button className="cadastroButton" type="submit" disabled={loading}>
               {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
           </Flex>
