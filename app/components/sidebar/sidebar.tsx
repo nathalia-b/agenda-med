@@ -5,7 +5,6 @@ import { Flex } from "@radix-ui/themes";
 import { SidebarLink } from "./sidebarLink";
 import React from "react";
 import {
-  ClockIcon,
   FilePlusIcon,
   HomeIcon,
   ListBulletIcon,
@@ -43,11 +42,6 @@ export default function Sidebar() {
           <SidebarLink href="/novo-agendamento">
             <FilePlusIcon style={{ width: "17px", height: "17px" }} />
             <span className="ml-5">Novo agendamento</span>
-          </SidebarLink>
-
-          <SidebarLink href="/horarios">
-            <ClockIcon style={{ width: "17px", height: "17px" }} />
-            <span className="ml-5">Horários</span>
           </SidebarLink>
 
           <SidebarLink href="/agendamentos">
