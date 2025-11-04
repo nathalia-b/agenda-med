@@ -2,18 +2,15 @@
 import { useState, useEffect } from "react";
 import { Convenio, Especialidade, Medico } from "@/app/lib/types";
 import {
-  AlertDialog,
   Avatar,
   Button,
   Flex,
-  IconButton,
   Link,
   Popover,
   Separator,
   Spinner,
 } from "@radix-ui/themes";
-import { MagnifyingGlassIcon, PlusIcon } from "@radix-ui/react-icons";
-import DialogNovaEspecialidade from "../horarios/page";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 const avatarGroupStyle: React.CSSProperties = {
   display: "flex",
@@ -27,7 +24,6 @@ export default function EspecialidadesList() {
   const [medicos, setMedicos] = useState<Medico[]>([]);
   const [especialidades, setEspecialidades] = useState<Especialidade[]>([]);
   const [convenios, setConvenios] = useState<Convenio[]>([]);
-  const [openDialog, setOpenDialog] = useState(false);
   useEffect(() => {
     const fetchData = async <T,>(url: string, setter: (data: T[]) => void) => {
       try {
