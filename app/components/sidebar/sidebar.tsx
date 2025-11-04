@@ -39,7 +39,7 @@ export default function Sidebar() {
             <span className="ml-5">Início</span>
           </SidebarLink>
 
-          <SidebarLink href="/novo-agendamento">
+          <SidebarLink href="/agendamentos/novo">
             <FilePlusIcon style={{ width: "17px", height: "17px" }} />
             <span className="ml-5">Novo agendamento</span>
           </SidebarLink>

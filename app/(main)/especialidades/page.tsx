@@ -138,16 +138,7 @@ export default function EspecialidadesList() {
         ))}
       </Flex>
 
-      <Flex align="center" gap="5" direction={"row"} justify={"between"}>
-        <h2>Convênios</h2>
-
-        <Link href="/especialidades/nova" className="self-end">
-          <Button title="Adicionar especialidade" variant="soft" size="1">
-            <PlusIcon width="15" height="15" />
-            Adicionar convênio
-          </Button>
-        </Link>
-      </Flex>
+      <h2>Convênios</h2>
 
       <Flex className="ml-4" wrap={"wrap"} width={"100%"} justify={"between"}>
         {convenios.map((convenio) => (
