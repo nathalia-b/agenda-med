@@ -1,7 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Convenio, Especialidade, Medico } from "@/app/lib/types";
-import { Avatar, Flex, Popover, Separator, Spinner } from "@radix-ui/themes";
+import {
+  AlertDialog,
+  Avatar,
+  Button,
+  Flex,
+  IconButton,
+  Link,
+  Popover,
+  Separator,
+  Spinner,
+} from "@radix-ui/themes";
+import { MagnifyingGlassIcon, PlusIcon } from "@radix-ui/react-icons";
+import DialogNovaEspecialidade from "../horarios/page";
 
 const avatarGroupStyle: React.CSSProperties = {
   display: "flex",
@@ -15,7 +27,7 @@ export default function EspecialidadesList() {
   const [medicos, setMedicos] = useState<Medico[]>([]);
   const [especialidades, setEspecialidades] = useState<Especialidade[]>([]);
   const [convenios, setConvenios] = useState<Convenio[]>([]);
-
+  const [openDialog, setOpenDialog] = useState(false);
   useEffect(() => {
     const fetchData = async <T,>(url: string, setter: (data: T[]) => void) => {
       try {
@@ -71,7 +83,23 @@ export default function EspecialidadesList() {
 
   return (
     <Flex wrap={"wrap"} direction={"column"}>
-      <h2>Especialidades</h2>
+      <Flex align="center" gap="5" direction={"row"} justify={"between"}>
+        <h2>Especialidades</h2>
+        <Flex gap="3">
+          <Link href="/especialidades/nova" className="self-end">
+            <Button title="Adicionar especialidade" variant="soft" size="1">
+              <PlusIcon width="15" height="15" />
+              Adicionar especialidade
+            </Button>
+          </Link>
+          <Link href="/medicos/novo" className="self-end">
+            <Button title="Adicionar médico" variant="soft" size="1">
+              <PlusIcon width="15" height="15" />
+              Adicionar médico
+            </Button>
+          </Link>
+        </Flex>
+      </Flex>
       <Flex className="px-5" wrap={"wrap"} width={"100%"} justify={"between"}>
         {medicosPorEspecialidade.map(({ especialidade, medicos }) => (
           <div key={especialidade.id} className="mb-5 w-100">
@@ -110,7 +138,17 @@ export default function EspecialidadesList() {
         ))}
       </Flex>
 
-      <h2>Convênios</h2>
+      <Flex align="center" gap="5" direction={"row"} justify={"between"}>
+        <h2>Convênios</h2>
+
+        <Link href="/especialidades/nova" className="self-end">
+          <Button title="Adicionar especialidade" variant="soft" size="1">
+            <PlusIcon width="15" height="15" />
+            Adicionar convênio
+          </Button>
+        </Link>
+      </Flex>
+
       <Flex className="ml-4" wrap={"wrap"} width={"100%"} justify={"between"}>
         {convenios.map((convenio) => (
           <div
